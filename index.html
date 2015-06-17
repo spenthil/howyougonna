@@ -9,26 +9,20 @@
   <meta name="viewport" content="width=device-width">
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-  <link href="http://vjs.zencdn.net/c/video-js.css" rel="stylesheet">
-  <script src="http://vjs.zencdn.net/c/video.js"></script>
+  <link href="http://vjs.zencdn.net/4.12/video-js.css" rel="stylesheet">
+  <script src="http://vjs.zencdn.net/4.12/video.js"></script>
 
   <style type="text/css" media="screen">
     body {
       background: #000;
       padding: 0;
       margin: 0;
+
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .hidden {
-      display: none !important
-    }
-
-    #cover {
-      display: block
-    }
     video {
       padding: 0;
       margin: 0;
@@ -38,43 +32,24 @@
 
   <!--
   HandBrakeCLI -i video.mov -o notready.mp4 --optimize --encoder="x264" --vb=1000 --ab=32 --maxWidth=640 --maxHeight=480 -r 24 --two-pass && ffmpeg -i notready.mp4 -vf "transpose=1" video.mp4 && rm notready.mp4
-  ffmpeg -i video.mp4 -vframes 1 -f image2 cover.jpg
-
-  TODO: ffmpeg2theora -o video.ogv video.mp4
   -->
 
 </head>
 <body>
 
-<img id="cover" src="cover.jpg" />
-
-<div id="videoContainer" class="hidden">
-  <video id="video" class="video-js vjs-default-skin" webkit-playsinline loop data-setup="{}"></video>
-</div>
+<video id="video" class="video-js vjs-default-skin" controls webkit-playsinline loop></video>
 
 <script>
-  var videoSource = [
+  var host = window.location.host;
+  var videoMode = $.grep(host.split("."), function (a) { return a == "howyougonna"; }).length;
+  var videoSources = [
     "video0.mp4",
     "video1.mp4"
-  ][(window.location.host.split(".").length) % 2] ;
+  ];
+  var videoSource = videoSources[videoMode % videoSources.length];
 
-  var video = $("#video");
-  var videoContainer = $("#videoContainer");
-  var cover = $("#cover");
-  var body = $("body");
-
-  video.attr("src", videoSource);
-</script>
-<script>
-  var start = function () {
-    cover.addClass("hidden");
-    videoContainer.removeClass("hidden");
-    video[0].player.play();
-  };
-
-  $("video").bind("play", start);
-
-  _V_("video").ready(function () {
+  var video = videojs("video");
+  video.ready(function () {
     var myPlayer = this;
     var aspectRatio = 352 / 640;
 
@@ -85,14 +60,14 @@
       }
       var width = height * aspectRatio;
       myPlayer.width(width).height(height);
-      cover.width(width).height(height);
     }
 
     resizeVideoJS();
     window.onresize = resizeVideoJS;
+    video.play();
   });
-
-  document.addEventListener('click', start, false);
+  video.src({type: "video/mp4", src: videoSource});
+  video.load();
 
 </script>
 
