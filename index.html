@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>HOW YOU GONNA?</title>
+    <meta name="description" content="How you gonna make me dance, with my pants on the ground?"/>
+    <meta name="author" content="spenthil"/>
+    <meta name="viewport" content="width=device-width">
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link href="http://vjs.zencdn.net/c/video-js.css" rel="stylesheet">
+    <script src="http://vjs.zencdn.net/c/video.js"></script>
+
+    <style type="text/css" media="screen">
+        body {
+            background: #000;
+            padding: 0;
+            margin: 0;
+        }
+
+        .center {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hidden {
+            display: none !important
+        }
+
+        #poster {
+            display: block
+        }
+    </style>
+
+
+    <!--
+    HandBrakeCLI -i video.mov -o notready.mp4 --optimize --encoder="x264" --vb=1000 --ab=32 --maxWidth=640 --maxHeight=480 -r 24 --two-pass && ffmpeg -i notready.mp4 -vf "transpose=1" video.mp4 && rm notready.mp4
+    ffmpeg -i video.mp4 -vframes 1 -f image2 video.jpg
+
+    TODO: ffmpeg2theora -o video.ogv video.mp4
+    -->
+
+</head>
+<body>
+
+<img id="poster" src="video.jpg" class="center"/>
+
+<div id="videoContainer" class="hidden">
+<video id="video" class="video-js vjs-default-skin center" webkit-playsinline autoplay loop preload="auto" data-setup="{}">
+    <source src="video.mp4" type='video/mp4'/>
+</video>
+</div>
+
+<script>
+    var video = $("#video");
+    var videoContainer = $("#videoContainer");
+    var poster = $("#poster");
+    var body = $("body");
+
+    var start = function() {
+        poster.addClass("hidden");
+        videoContainer.removeClass("hidden");
+        video[0].player.play();
+    };
+
+    $("video").bind("play", start);
+
+    _V_("video").ready(function () {
+        var myPlayer = this;
+        var aspectRatio = 352 / 640;
+
+        function resizeVideoJS() {
+            var height = window.innerHeight;
+            if (height * aspectRatio > window.innerWidth) {
+                height = window.innerWidth / aspectRatio;
+            }
+            var width = height * aspectRatio;
+            myPlayer.width(width).height(height);
+            poster.width(width).height(height);
+        }
+
+        resizeVideoJS();
+        window.onresize = resizeVideoJS;
+    });
+
+    document.addEventListener('click', start, false);
+
+</script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-39402241-6', 'howyougonna.com');
+  ga('send', 'pageview');
+
+</script>
+
+</body>
+</html>
