@@ -41,7 +41,9 @@
 
 <script>
   var host = window.location.host;
-  var videoMode = $.grep(host.split("."), function (a) { return a == "howyougonna"; }).length+1;
+  var videoMode = $.grep(host.split("."), function (a) {
+        return a == "howyougonna";
+      }).length + 1;
   var videoSources = [
     "video0.mp4",
     "video1.mp4"
