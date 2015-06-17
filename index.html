@@ -37,7 +37,7 @@
 </head>
 <body>
 
-<video id="video" class="video-js vjs-default-skin" controls webkit-playsinline loop></video>
+<video id="video" class="video-js vjs-default-skin"></video>
 
 <script>
   var host = window.location.host;
@@ -66,9 +66,11 @@
 
     resizeVideoJS();
     window.onresize = resizeVideoJS;
-    video.play();
   });
   video.src({type: "video/mp4", src: videoSource});
+  video.controls(true);
+  video.loop(true);
+  video.autoplay(true);
   video.load();
 
 </script>
