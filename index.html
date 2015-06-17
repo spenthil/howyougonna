@@ -1,90 +1,98 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>HOW YOU GONNA?</title>
-    <meta name="description" content="How you gonna make me dance, with my pants on the ground?"/>
-    <meta name="author" content="spenthil"/>
-    <meta name="viewport" content="width=device-width">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>HOW YOU GONNA?</title>
+  <meta name="description" content="How you gonna make me dance, with my pants on the ground?"/>
+  <meta name="author" content="spenthil"/>
+  <meta name="viewport" content="width=device-width">
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <link href="http://vjs.zencdn.net/c/video-js.css" rel="stylesheet">
-    <script src="http://vjs.zencdn.net/c/video.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <link href="http://vjs.zencdn.net/c/video-js.css" rel="stylesheet">
+  <script src="http://vjs.zencdn.net/c/video.js"></script>
 
-    <style type="text/css" media="screen">
-        body {
-            background: #000;
-            padding: 0;
-            margin: 0;
-        }
+  <style type="text/css" media="screen">
+    body {
+      background: #000;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-        .center {
-            margin-left: auto;
-            margin-right: auto;
-        }
+    .hidden {
+      display: none !important
+    }
 
-        .hidden {
-            display: none !important
-        }
+    #cover {
+      display: block
+    }
+    video {
+      padding: 0;
+      margin: 0;
+    }
+  </style>
 
-        #poster {
-            display: block
-        }
-    </style>
 
+  <!--
+  HandBrakeCLI -i video.mov -o notready.mp4 --optimize --encoder="x264" --vb=1000 --ab=32 --maxWidth=640 --maxHeight=480 -r 24 --two-pass && ffmpeg -i notready.mp4 -vf "transpose=1" video.mp4 && rm notready.mp4
+  ffmpeg -i video.mp4 -vframes 1 -f image2 cover.jpg
 
-    <!--
-    HandBrakeCLI -i video.mov -o notready.mp4 --optimize --encoder="x264" --vb=1000 --ab=32 --maxWidth=640 --maxHeight=480 -r 24 --two-pass && ffmpeg -i notready.mp4 -vf "transpose=1" video.mp4 && rm notready.mp4
-    ffmpeg -i video.mp4 -vframes 1 -f image2 video.jpg
-
-    TODO: ffmpeg2theora -o video.ogv video.mp4
-    -->
+  TODO: ffmpeg2theora -o video.ogv video.mp4
+  -->
 
 </head>
 <body>
 
-<img id="poster" src="video.jpg" class="center"/>
+<img id="cover" src="cover.jpg" />
 
 <div id="videoContainer" class="hidden">
-<video id="video" class="video-js vjs-default-skin center" webkit-playsinline autoplay loop preload="auto" data-setup="{}">
-    <source src="video.mp4" type='video/mp4'/>
-</video>
+  <video id="video" class="video-js vjs-default-skin" webkit-playsinline loop data-setup="{}"></video>
 </div>
 
 <script>
-    var video = $("#video");
-    var videoContainer = $("#videoContainer");
-    var poster = $("#poster");
-    var body = $("body");
+  var videoSource = [
+    "video0.mp4",
+    "video1.mp4"
+  ][(window.location.host.split(".").length) % 2] ;
 
-    var start = function() {
-        poster.addClass("hidden");
-        videoContainer.removeClass("hidden");
-        video[0].player.play();
-    };
+  var video = $("#video");
+  var videoContainer = $("#videoContainer");
+  var cover = $("#cover");
+  var body = $("body");
 
-    $("video").bind("play", start);
+  video.attr("src", videoSource);
+</script>
+<script>
+  var start = function () {
+    cover.addClass("hidden");
+    videoContainer.removeClass("hidden");
+    video[0].player.play();
+  };
 
-    _V_("video").ready(function () {
-        var myPlayer = this;
-        var aspectRatio = 352 / 640;
+  $("video").bind("play", start);
 
-        function resizeVideoJS() {
-            var height = window.innerHeight;
-            if (height * aspectRatio > window.innerWidth) {
-                height = window.innerWidth / aspectRatio;
-            }
-            var width = height * aspectRatio;
-            myPlayer.width(width).height(height);
-            poster.width(width).height(height);
-        }
+  _V_("video").ready(function () {
+    var myPlayer = this;
+    var aspectRatio = 352 / 640;
 
-        resizeVideoJS();
-        window.onresize = resizeVideoJS;
-    });
+    function resizeVideoJS() {
+      var height = window.innerHeight;
+      if (height * aspectRatio > window.innerWidth) {
+        height = window.innerWidth / aspectRatio;
+      }
+      var width = height * aspectRatio;
+      myPlayer.width(width).height(height);
+      cover.width(width).height(height);
+    }
 
-    document.addEventListener('click', start, false);
+    resizeVideoJS();
+    window.onresize = resizeVideoJS;
+  });
+
+  document.addEventListener('click', start, false);
 
 </script>
 
